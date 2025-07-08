@@ -64,5 +64,5 @@ Built with a modern stack: **React, Node.js, MongoDB, AWS (S3 + Lambda), Docker,
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/jobify.git
+git clone [https://github.com/your-username/jobify.git](https://github.com/Ketan9548/Jobify.git)
 cd jobify

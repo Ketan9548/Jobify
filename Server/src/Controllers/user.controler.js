@@ -1,10 +1,11 @@
-import { User } from "../Models/User.Model";
+import { User } from "../Models/User.Model.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken";
 
+
+// Controllers for User Registration
 const registration = async (req, res) => {
     try {
-
         const { fullname, email, phoneNumber, password, role } = req.body;
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({ message: "All fields are required", success: false });
@@ -31,6 +32,8 @@ const registration = async (req, res) => {
     }
 }
 
+
+// Controllers for User Login
 const login = async (req, res) => {
     try {
 
@@ -75,6 +78,7 @@ const login = async (req, res) => {
 }
 
 
+// Controllers for User Logout
 const logout = async (req, res) => {
     try {
         res.clearCookie("token");
@@ -84,17 +88,21 @@ const logout = async (req, res) => {
     }
 }
 
+
+// Controllers for User Profile
 const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
         const file = req.file;
-        if (!fullname || !email || !phoneNumber || !bio || !skills) {
-            return res.status(400).json({ message: "All fields are required", success: false });
-        }
+        // if (!fullname || !email || !phoneNumber || !bio || !skills) {
+        //     return res.status(400).json({ message: "All fields are required", success: false });
+        // }
 
         // cloudinary or any other file storage service can be used to handle file uploads
-
-        const skillsArray = skills.split(',').map(skill => skill.trim());
+        const skillsArray = [];
+        if (skills) {
+            skillsArray = skills.split(',').map(skill => skill.trim());
+        }
 
         const userId = req.id;
         let user = await User.findById(userId);
@@ -103,16 +111,21 @@ const updateProfile = async (req, res) => {
         }
 
         // updating user profile
-        user.fullname = fullname;
-        user.email = email;
-        user.phoneNumber = phoneNumber;
-        user.profile.bio = bio;
-        user.profile.skills = skillsArray;
+        if (fullname) user.fullname = fullname;
+        if (email) user.email = email;
+        if (phoneNumber) user.phoneNumber = phoneNumber;
+        if (bio) user.profile.bio = bio;
+        if (skillsArray) user.profile.skills = skillsArray;
 
         // resume implementation can be added here using cloudinary or any other file storage service
+        if (file) {
+            user.profile.resume = file.path;
+            user.profile.resumeOriginalName = file.originalname;
+        }
 
         await user.save();
 
+        // returning user profile
         user = {
             _id: user._id,
             fullname: user.fullname,

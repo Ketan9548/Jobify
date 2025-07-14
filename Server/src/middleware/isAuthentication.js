@@ -13,6 +13,7 @@ const isAuthentication = (req, res, next) => {
         if (!decoded) {
             return res.status(401).json({ message: "Invalid Token", success: false });
         }
+        // res.json({ message: "Authorized", success: true, data: decoded });
         req.id = decoded.Userid;
         next();
     } catch (error) {
